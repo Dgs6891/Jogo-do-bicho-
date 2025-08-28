@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roleta do Jogo do Bicho - Apostas</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ===== VARIÁVEIS CSS ===== */
+    :root {
+      --primary-color: #FFD700;
+      --secondary-color: #1a2a6c;
+      --accent-color: #b21f1f;
+      --background-gradient: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+      --container-bg: rgba(0,0,0,0.7);
+      --text-color: white;
+      --success-color: #4CAF50;
+      --danger-color: #F44336;
+      --info-color: #2196F3;
+    }
+
+    /* ===== ESTILO GERAL ===== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--background-gradient);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text-color);
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ===== CONTAINER PRINCIPAL ===== */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: auto;
+      background: var(--container-bg);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    /* ===== CABEÇALHO ===== */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      font-size: 2.2rem;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.6);
+      flex: 1;
+      text-align: center;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    /* ===== RELÓGIO ===== */
+    .relogio {
+      background: rgba(255,255,255,0.1);
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin: 10px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 1.2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .relogio i {
+      color: var(--primary-color);
+    }
+
+    /* ===== ÁREA DE CADA PRÊMIO ===== */
+    .premios-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .premio {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 15px;
+      text-align: left;
+      animation: fadeIn 0.5s;
+      border: 1px solid rgba(255,255,255,0.2);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== TÍTULO DE CADA PRÊMIO ===== */
+    .titulo {
+      font-weight: bold;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+
+    /* ===== ROLETAS DE NÚMEROS ===== */
+    .roleta {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+
+    /* ===== DÍGITOS DA ROLETA ===== */
+    .digito {
+      background: #2c3e50;
+      width: 55px;
+      height: 65px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.8rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      border: 2px solid #444;
+    }
+
+    /* ===== INFORMAÇÕES DO BICHO ===== */
+    .info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      justify-content: center;
+    }
+
+    .emoji {
+      font-size: 2.8rem;
+    }
+
+    .nome {
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    .dezenas {
+      font-size: 1rem;
+      color: #ccc;
+      text-align: center;
+      margin-top: 5px;
+    }
+
+    /* ===== ÁREA DOS BOTÕES ===== */
+    .botoes {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    button:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+    }
+
+    #sortear {
+      background: linear-gradient(to right, var(--success-color), #8BC34A);
+      color: white;
+    }
+
+    #resetar, #apagar-tudo {
+      background: linear-gradient(to right, var(--danger-color), #FF9800);
+      color: white;
+    }
+
+    .btn-whatsapp {
+      background: linear-gradient(to right, #25D366, #128C7E);
+      color: white;
+    }
+
+    .btn-info {
+      background: linear-gradient(to right, var(--info-color), #21CBF3);
+      color: white;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* ===== ESTILOS PARA LAS APOSTAS ===== */
+    .apostas-container {
+      margin-top: 30px;
+      background: rgba(0,0,0,0.5);
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .apostas-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .apostas-titulo {
+      color: var(--primary-color);
+      font-size: 1.5rem;
+    }
+
+    .apostas-total {
+      background: rgba(255,255,255,0.1);
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .apostas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .aposta-item {
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .aposta-item:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-5px);
+    }
+
+    .aposta-item.selecionada {
+      background: rgba(76, 175, 80, 0.3);
+      border: 2px solid var(--success-color);
+    }
+
+    .aposta-nome {
+      font-weight: bold;
+      margin-bottom: 5px;
+      font-size: 1rem;
+    }
+
+    .aposta-valor {
+      color: var(--primary-color);
+      font-size: 1.1rem;
+    }
+
+    /* ===== MODAL DE APOSTA ===== */
+    .modal-aposta {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-aposta.ativo {
+      display: flex;
+    }
+
+    .modal-conteudo {
+      background: var(--container-bg);
+      border-radius: 15px;
+      padding: 25px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .fechar-modal {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--primary-color);
+    }
+
+    .modal-titulo {
+      color: var(--primary-color);
+      margin-bottom: 15px;
+      font-size: 1.5rem;
+      text-align: center;
+    }
+
+    .modal-descricao {
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .modal-exemplo {
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+    }
+
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: left;
+    }
+
+    .input-group label {
+      font-weight: bold;
+    }
+
+    .input-group input, .input-group select {
+      padding: 12px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      background: white;
+      color: #333;
+      font-size: 1rem;
+    }
+
+    .input-money {
+      position: relative;
+    }
+
+    .input-money::before {
+      content: "R$";
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #666;
+      z-index: 1;
+    }
+
+    .input-money input {
+      padding-left: 30px;
+    }
+
+    .btn-apostar {
+      background: linear-gradient(to right, var(--info-color), #21CBF3);
+      color: white;
+      padding: 12px 25px;
+      margin-top: 10px;
+    }
+
+    .grupo-bichos {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .bicho-item {
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .bicho-item:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .bicho-item.selecionado {
+      background: rgba(76, 175, 80, 0.3);
+      border: 2px solid var(--success-color);
+    }
+
+    .numeros-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .numero-input-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .numero-input-group input {
+      flex: 1;
+    }
+
+    .btn-remover-numero {
+      background: var(--danger-color);
+      color: white;
+      padding: 0 10px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-adicionar-numero {
+      background: var(--info-color);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      margin-top: 5px;
+      align-self: flex-start;
+    }
+
+    .resultados {
+      margin-top: 20px;
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 10px;
+      text-align: left;
+    }
+
+    .resultado-item {
+      margin: 10px 0;
+      padding: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .ganhou {
+      color: var(--success-color);
+      font-weight: bold;
+    }
+
+    .perdeu {
+      color: var(--danger-color);
+    }
+
+    /* ===== RODAPÉ ===== */
+    .footer {
+      margin-top: 30px;
+      color: #ccc;
+      font-size: 0.9rem;
+    }
+
+    /* ===== ANIMAÇÕES ===== */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes girar {
+      0% { transform: rotateX(0); }
+      100% { transform: rotateX(360deg); }
+    }
+
+    .girando {
+      animation: girar 0.5s ease-in-out;
+    }
+
+    /* ===== RESPONSIVIDADE ===== */
+    @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+      .container {
+        padding: 15px;
+      }
+      
+      .premios-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .apostas-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .grupo-bichos {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+      }
+      
+      .premios-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .apostas-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .digito {
+        width: 45px;
+        height: 55px;
+        font-size: 2.2rem;
+      }
+      
+      .grupo-bichos {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .apostas-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .digito {
+        width: 40px;
+        height: 50px;
+        font-size: 1.8rem;
+      }
+      
+      .grupo-bichos {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎰 Roleta Completa do Jogo do Bicho 🎰</h1>
+      <div class="header-buttons">
+        <button id="btn-info" class="btn-info">
+          <i class="fas fa-info-circle"></i> Ajuda
+        </button>
+        <button id="btn-share" class="btn-whatsapp" disabled>
+          <i class="fab fa-whatsapp"></i> Compartilhar
+        </button>
+      </div>
+    </div>
+    
+    <div class="relogio">
+      <i class="fas fa-clock"></i>
+      <span id="data-hora">Carregando...</span>
+    </div>
+    
+    <div id="premios" class="premios-container"></div>
+    
+    <div class="botoes">
+      <button id="sortear">
+        <i class="fas fa-dice"></i> Sortear
+      </button>
+      <button id="gerar-automatico">
+        <i class="fas fa-bolt"></i> Gerar Automático
+      </button>
+      <button id="resetar" disabled>
+        <i class="fas fa-sync-alt"></i> Resetar
+      </button>
+      <button id="apagar-tudo">
+        <i class="fas fa-trash-alt"></i> Apagar Tudo
+      </button>
+    </div>
+
+    <div class="apostas-container">
+      <div class="apostas-header">
+        <div class="apostas-titulo">Faça suas apostas</div>
+        <div class="apostas-total" id="apostas-total">Total: R$ 0,00</div>
+      </div>
+      
+      <div class="apostas-grid" id="apostas-grid">
+        <!-- As apostas serão adicionadas via JavaScript -->
+      </div>
+      
+      <div class="resultados" id="resultados">
+        <h3>Resultados das Apostas</h3>
+        <div id="lista-resultados"></div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>Jogo para fins educacionais | Não são realizadas transações financeiras reais</p>
+    </div>
+  </div>
+
+  <!-- Modal de Informações -->
+  <div id="modal-info" class="modal-aposta">
+    <div class="modal-conteudo">
+      <span class="fechar-modal">&times;</span>
+      <h3 class="modal-titulo">Como Jogar</h3>
+      <div id="modal-info-content">
+        <!-- Conteúdo será preenchido por JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Aposta -->
+  <div id="modal-aposta" class="modal-aposta">
+    <div class="modal-conteudo">
+      <span class="fechar-modal">&times;</span>
+      <h3 class="modal-titulo" id="modal-aposta-titulo">Título da Aposta</h3>
+      <div id="modal-aposta-descricao"></div>
+      
+      <form class="modal-form" id="form-aposta">
+        <input type="hidden" id="aposta-tipo">
+        
+        <div class="input-group">
+          <label for="aposta-jogador">Seu nome:</label>
+          <input type="text" id="aposta-jogador" required>
+        </div>
+        
+        <div class="input-group" id="grupo-numero">
+          <label id="label-numero">Números:</label>
+          <div class="numeros-container" id="numeros-container">
+            <!-- Inputs de números serão adicionados dinamicamente -->
+          </div>
+          <button type="button" class="btn-adicionar-numero" id="btn-adicionar-numero">
+            <i class="fas fa-plus"></i> Adicionar número
+          </button>
+        </div>
+        
+        <div class="input-group" id="grupo-bichos-container" style="display: none;">
+          <label>Selecione os bichos:</label>
+          <div class="grupo-bichos" id="grupo-bichos">
+            <!-- Bichos serão adicionados via JavaScript -->
+          </div>
+        </div>
+        
+        <div class="input-group">
+          <label for="aposta-valor">Valor:</label>
+          <div class="input-money">
+            <input type="text" id="aposta-valor" class="money-input" required>
+          </div>
+        </div>
+        
+        <div class="input-group" id="grupo-premios">
+          <label for="aposta-premios">Prêmios:</label>
+          <select id="aposta-premios">
+            <option value="1">Apenas 1º Prêmio (Cabeça)</option>
+            <option value="5">Do 1º ao 5º Prêmio</option>
+          </select>
+        </div>
+        
+        <div class="botoes">
+          <button type="button" id="btn-gerar-automatico-modal">
+            <i class="fas fa-bolt"></i> Gerar Automático
+          </button>
+          <button type="submit" class="btn-apostar">
+            <i class="fas fa-ticket-alt"></i> Confirmar Aposta
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Dados dos bichos
+    const bichos = [
+      { id: 1, nome: "Avestruz", emoji: "🥚", dezenas: [1,2,3,4] },
+      { id: 2, nome: "Águia", emoji: "🦅", dezenas: [5,6,7,8] },
+      { id: 3, nome: "Burro", emoji: "🐴", dezenas: [9,10,11,12] },
+      { id: 4, nome: "Borboleta", emoji: "🦋", dezenas: [13,14,15,16] },
+      { id: 5, nome: "Cachorro", emoji: "🐕", dezenas: [17,18,19,20] },
+      { id: 6, nome: "Cabra", emoji: "🐐", dezenas: [21,22,23,24] },
+      { id: 7, nome: "Carneiro", emoji: "🐏", dezenas: [25,26,27,28] },
+      { id: 8, nome: "Camelo", emoji: "🐫", dezenas: [29,30,31,32] },
+      { id: 9, nome: "Cobra", emoji: "🐍", dezenas: [33,34,35,36] },
+      { id: 10, nome: "Coelho", emoji: "🐇", dezenas: [37,38,39,40] },
+      { id: 11, nome: "Cavalo", emoji: "🐎", dezenas: [41,42,43,44] },
+      { id: 12, nome: "Elefante", emoji: "🐘", dezenas: [45,46,47,48] },
+      { id: 13, nome: "Galo", emoji: "🐓", dezenas: [49,50,51,52] },
+      { id: 14, nome: "Gato", emoji: "🐈", dezenas: [53,54,55,56] },
+      { id: 15, nome: "Jacaré", emoji: "🐊", dezenas: [57,58,59,60] },
+      { id: 16, nome: "Leão", emoji: "🦁", dezenas: [61,62,63,64] },
+      { id: 17, nome: "Macaco", emoji: "🦧", dezenas: [65,66,67,68] },
+      { id: 18, nome: "Porco", emoji: "🐖", dezenas: [69,70,71,72] },
+      { id: 19, nome: "Pavão", emoji: "🦚", dezenas: [73,74,75,76] },
+      { id: 20, nome: "Peru", emoji: "🦃", dezenas: [77,78,79,80] },
+      { id: 21, nome: "Touro", emoji: "🐂", dezenas: [81,82,83,84] },
+      { id: 22, nome: "Tigre", emoji: "🐅", dezenas: [85,86,87,88] },
+      { id: 23, nome: "Urso", emoji: "🐻", dezenas: [89,90,91,92] },
+      { id: 24, nome: "Veado", emoji: "🦌", dezenas: [93,94,95,96] },
+      { id: 25, nome: "Vaca", emoji: "🐄", dezenas: [97,98,99,0] }
+    ];
+
+    // Informações detalhadas sobre cada tipo de aposta
+    const apostasInfo = [
+      { 
+        nome: "Grupo", 
+        valor: 18.00, 
+        tipo: "grupo",
+        descricao: "Como joga: escolhe 1 ou mais dos 25 grupos (cada grupo tem 4 dezenas, ex: Grupo 1 = avestruz → 01, 02, 03, 04).",
+        ganho: "Como ganha: se a dezena sorteada no resultado pertencer a algum dos grupos escolhidos.",
+        cotacao: "Cotação: 18x por R$1,00 para cada grupo.",
+        exemplo: "Exemplo: R$10 no Grupo 1 → ganha R$180,00 no 1º prêmio. No 1º ao 5º → o prêmio (R$180) é dividido em 5 → R$36,00 por posição."
+      },
+      { 
+        nome: "Dezena", 
+        valor: 60.00, 
+        tipo: "dezena",
+        descricao: "Como joga: escolhe uma ou mais dezenas de 00 a 99.",
+        ganho: "Como ganha: se os 2 últimos dígitos do prêmio sorteado forem iguais a alguma dezena escolhida.",
+        cotacao: "Cotação: 60x por R$1,00 para cada dezena.",
+        exemplo: "Exemplo: R$5 na dezena 23 → ganha R$300,00 no 1º prêmio. No 1º ao 5º → R$60 ÷ 5 = R$12,00 por prêmio."
+      },
+      { 
+        nome: "Centena", 
+        valor: 600.00, 
+        tipo: "centena",
+        descricao: "Como joga: escolhe uma ou mais centenas de 000 a 999.",
+        ganho: "Como ganha: se os 3 últimos dígitos do prêmio sorteado forem iguais a alguma centena escolhida.",
+        cotacao: "Cotação: 600x por R$1,00 para cada centena.",
+        exemplo: "Exemplo: R$2 na centena 345 → ganha R$1.200,00 no 1º prêmio. No 1º ao 5º → R$600 ÷ 5 = R$120 por prêmio."
+      },
+      { 
+        nome: "Milhar", 
+        valor: 6000.00, 
+        tipo: "milhar",
+        descricao: "Como joga: escolhe uma ou mais milhares de 0000 a 9999.",
+        ganho: "Como ganha: se o número completo sair no resultado.",
+        cotacao: "Cotação: 6.000x por R$1,00 para cada milhar.",
+        exemplo: "Exemplo: R$1 no milhar 1234 → ganha R$6.000,00 no 1º prêmio. No 1º ao 5º → R$6.000 ÷ 5 = R$1.200 por posição."
+      },
+      { 
+        nome: "Milhar + Centena", 
+        valor: 3300.00, 
+        tipo: "milhar_centena",
+        descricao: "Como joga: aposta ao mesmo tempo na milhar (4 dígitos) e na centena (3 últimos dígitos).",
+        ganho: "Como ganha: se acertar a milhar completa ou a centena.",
+        cotacao: "Cotação: 3.300x por R$1,00.",
+        exemplo: "Exemplo: Aposta no 1234 → ganha se sair 1234 (milhar) ou 234 (centena)."
+      }
+    ];
+
+    // Elementos DOM
+    const premiosDiv = document.getElementById("premios");
+    const sortearBtn = document.getElementById("sortear");
+    const resetarBtn = document.getElementById("resetar");
+    const apagarTudoBtn = document.getElementById("apagar-tudo");
+    const gerarAutomaticoBtn = document.getElementById("gerar-automatico");
+    const apostasGrid = document.getElementById("apostas-grid");
+    const listaResultados = document.getElementById("lista-resultados");
+    const btnInfo = document.getElementById("btn-info");
+    const btnShare = document.getElementById("btn-share");
+    const modalInfo = document.getElementById("modal-info");
+    const modalAposta = document.getElementById("modal-aposta");
+    const modalInfoContent = document.getElementById("modal-info-content");
+    const modalApostaTitulo = document.getElementById("modal-aposta-titulo");
+    const modalApostaDescricao = document.getElementById("modal-aposta-descricao");
+    const formAposta = document.getElementById("form-aposta");
+    const apostaTipoInput = document.getElementById("aposta-tipo");
+    const apostaJogadorInput = document.getElementById("aposta-jogador");
+    const apostaValorInput = document.getElementById("aposta-valor");
+    const apostaPremiosSelect = document.getElementById("aposta-premios");
+    const grupoPremios = document.getElementById("grupo-premios");
+    const grupoNumero = document.getElementById("grupo-numero");
+    const numerosContainer = document.getElementById("numeros-container");
+    const btnAdicionarNumero = document.getElementById("btn-adicionar-numero");
+    const grupoBichosContainer = document.getElementById("grupo-bichos-container");
+    const grupoBichos = document.getElementById("grupo-bichos");
+    const labelNumero = document.getElementById("label-numero");
+    const btnGerarAutomaticoModal = document.getElementById("btn-gerar-automatico-modal");
+    const fecharModal = document.querySelectorAll(".fechar-modal");
+    const dataHoraElement = document.getElementById("data-hora");
+    const apostasTotalElement = document.getElementById("apostas-total");
+    
+    const titulos = ["1º Prêmio","2º Prêmio","3º Prêmio","4º Prêmio","5º Prêmio"];
+    
+    // Variáveis de estado
+    let numerosSorteados = [];
+    let apostaSelecionada = null;
+    let apostasFeitas = [];
+    let contadorApostas = 1;
+    let nomeJogador = "";
+    let dataSorteio = "";
+    let horaSorteio = "";
+    let bichosSelecionados = [];
+    let numerosAposta = [];
+
+    // Mapa para converter números em emojis
+    const mapaEmoji = {"0":"0️⃣","1":"1️⃣","2":"2️⃣","3":"3️⃣","4":"4️⃣","5":"5️⃣","6":"6️⃣","7":"7️⃣","8":"8️⃣","9":"9️⃣"};
+    
+    // Inicializar a aplicação
+    document.addEventListener('DOMContentLoaded', function() {
+      inicializar();
+      carregarDados();
+      atualizarRelogio();
+      setInterval(atualizarRelogio, 100);
+    });
+
+    function numeroEmoji(num) {
+      return num.toString().split("").map(d => mapaEmoji[d]).join("");
+    }
+
+    // Atualizar relógio em tempo real
+    function atualizarRelogio() {
+      const agora = new Date();
+      const data = agora.toLocaleDateString('pt-BR');
+      const horas = agora.getHours().toString().padStart(2, '0');
+      const minutos = agora.getMinutes().toString().padStart(2, '0');
+      const segundos = agora.getSeconds().toString().padStart(2, '0');
+      const milissegundos = agora.getMilliseconds().toString().padStart(3, '0');
+      
+      dataHoraElement.textContent = `${data} ${horas}:${minutos}:${segundos}.${milissegundos}`;
+    }
+
+    // Máscara para valor monetário
+    function mascaraMoeda(event) {
+      let value = event.target.value.replace(/\D/g, '');
+      value = (value / 100).toFixed(2) + '';
+      value = value.replace('.', ',');
+      value = value.replace(/(\d)(\d{3})(\d{3}),/g, '$1.$2.$3,');
+      value = value.replace(/(\d)(\d{3}),/g, '$1.$2,');
+      event.target.value = value;
+    }
+
+    // Formatar valor para número
+    function parseMoney(value) {
+      return parseFloat(value.replace(/\./g, '').replace(',', '.'));
+    }
+
+    // Formatador de moeda brasileira
+    function formatarMoeda(valor) {
+      return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    // Inicializar a interface
+    function inicializar() {
+      // Aplicar máscara monetária
+      apostaValorInput.addEventListener('input', mascaraMoeda);
+      
+      // Event listeners
+      sortearBtn.onclick = sortear;
+      resetarBtn.onclick = resetar;
+      apagarTudoBtn.onclick = apagarTudo;
+      gerarAutomaticoBtn.onclick = gerarApostaAutomatica;
+      btnInfo.onclick = mostrarInformacoes;
+      btnShare.onclick = compartilharWhatsApp;
+      formAposta.onsubmit = fazerAposta;
+      btnGerarAutomaticoModal.onclick = gerarAutomaticoModal;
+      btnAdicionarNumero.onclick = adicionarInputNumero;
+      
+      // Fechar modais
+      fecharModal.forEach(btn => {
+        btn.onclick = () => {
+          modalInfo.classList.remove('ativo');
+          modalAposta.classList.remove('ativo');
+        };
+      });
+      
+      // Fechar modal clicando fora dele
+      window.onclick = function(event) {
+        if (event.target == modalInfo) {
+          modalInfo.classList.remove('ativo');
+        }
+        if (event.target == modalAposta) {
+          modalAposta.classList.remove('ativo');
+        }
+      }
+      
+      criarInterface();
+      criarApostasInterface();
+      atualizarListaApostas();
+    }
+
+    function criarInterface() {
+      premiosDiv.innerHTML = "";
+      for (let i=0;i<5;i++) {
+        const premio = document.createElement("div");
+        premio.className = "premio";
+        premio.innerHTML = `
+          <div class="titulo">${titulos[i]}</div>
+          <div class="roleta" id="roleta-${i}">
+            <div class="digito">❓</div>
+            <div class="digito">❓</div>
+            <div class="digito">❓</div>
+            <div class="digito">❓</div>
+          </div>
+          <div class="info">
+            <div class="emoji">❓</div>
+            <div>
+              <div class="nome">Aguardando...</div>
+              <div class="dezenas">--</div>
+            </div>
+          </div>
+        `;
+        premiosDiv.appendChild(premio);
+      }
+    }
+
+    function criarApostasInterface() {
+      apostasGrid.innerHTML = "";
+      apostasInfo.forEach(aposta => {
+        const apostaItem = document.createElement("div");
+        apostaItem.className = "aposta-item";
+        apostaItem.dataset.tipo = aposta.tipo;
+        apostaItem.innerHTML = `
+          <div class="aposta-nome">${aposta.nome}</div>
+          <div class="aposta-valor">${formatarMoeda(aposta.valor)}</div>
+          <div class="aposta-emoji">${obterEmojiAposta(aposta.tipo)}</div>
+        `;
+        apostaItem.addEventListener("click", () => selecionarAposta(aposta));
+        apostasGrid.appendChild(apostaItem);
+      });
+    }
+
+    function obterEmojiAposta(tipo) {
+      const emojis = {
+        'grupo': '🔢',
+        'dezena': '🔟',
+        'milhar': '🎯',
+        'centena': '💯',
+        'milhar_centena': '🎯💯'
+      };
+      
+      if (tipo.includes('grupo')) return emojis.grupo;
+      if (tipo.includes('dezena')) return emojis.dezena;
+      if (tipo.includes('milhar') && tipo.includes('centena')) return emojis.milhar_centena;
+      if (tipo.includes('milhar')) return emojis.milhar;
+      if (tipo.includes('centena')) return emojis.centena;
+      
+      return '🎲';
+    }
+
+    function selecionarAposta(aposta) {
+      apostaSelecionada = aposta;
+      bichosSelecionados = [];
+      numerosAposta = [""];
+      
+      // Configurar modal de aposta
+      modalApostaTitulo.textContent = aposta.nome;
+      modalApostaDescricao.innerHTML = `
+        <p class="modal-descricao">${aposta.descricao}</p>
+        <p class="modal-descricao">${aposta.ganho}</p>
+        <p class="modal-descricao">${aposta.cotacao}</p>
+        ${aposta.exemplo ? `<div class="modal-exemplo">${aposta.exemplo}</div>` : ''}
+      `;
+      
+      // Configurar campos do formulário
+      apostaTipoInput.value = aposta.tipo;
+      apostaJogadorInput.value = nomeJogador;
+      apostaValorInput.value = "5,00";
+      
+      // Limpar e configurar inputs de números
+      numerosContainer.innerHTML = "";
+      adicionarInputNumero();
+      
+      // Mostrar/ocultar campos baseado no tipo de aposta
+      if (aposta.tipo === "grupo") {
+        grupoNumero.style.display = "none";
+        grupoBichosContainer.style.display = "flex";
+        criarBichosParaSelecao();
+      } else {
+        grupoNumero.style.display = "flex";
+        grupoBichosContainer.style.display = "none";
+        
+        // Configurar placeholder baseado no tipo de aposta
+        if (aposta.tipo === "dezena") {
+          labelNumero.textContent = "Dezenas (00-99):";
+        } else if (aposta.tipo === "centena") {
+          labelNumero.textContent = "Centenas (000-999):";
+        } else if (aposta.tipo === "milhar") {
+          labelNumero.textContent = "Milhares (0000-9999):";
+        } else if (aposta.tipo === "milhar_centena") {
+          labelNumero.textContent = "Milhar (0000-9999):";
+        }
+      }
+      
+      // Mostrar seleção de prêmios para todos os tipos
+      grupoPremios.style.display = "flex";
+      apostaPremiosSelect.value = "1";
+      
+      // Mostrar modal
+      modalAposta.classList.add('ativo');
+    }
+
+    function adicionarInputNumero(valor = "") {
+      const index = numerosAposta.length;
+      numerosAposta.push(valor);
+      
+      const inputGroup = document.createElement("div");
+      inputGroup.className = "numero-input-group";
+      inputGroup.innerHTML = `
+        <input type="text" data-index="${index}" value="${valor}" placeholder="${obterPlaceholder()}" inputmode="numeric">
+        ${index > 0 ? `<button type="button" class="btn-remover-numero" data-index="${index}">×</button>` : ''}
+      `;
+      
+      numerosContainer.appendChild(inputGroup);
+      
+      // Adicionar evento de remoção se não for o primeiro input
+      if (index > 0) {
+        const btnRemover = inputGroup.querySelector('.btn-remover-numero');
+        btnRemover.onclick = function() {
+          removerInputNumero(index);
+        };
+      }
+      
+      // Adicionar evento de input
+      const input = inputGroup.querySelector('input');
+      input.addEventListener('input', function() {
+        numerosAposta[index] = this.value;
+      });
+    }
+
+    function removerInputNumero(index) {
+      // Remover do array
+      numerosAposta.splice(index, 1);
+      
+      // Reconstruir a interface
+      numerosContainer.innerHTML = "";
+      numerosAposta.forEach((valor, idx) => {
+        adicionarInputNumero(valor);
+      });
+    }
+
+    function obterPlaceholder() {
+      if (!apostaSelecionada) return "Número";
+      
+      if (apostaSelecionada.tipo === "dezena") return "00-99";
+      if (apostaSelecionada.tipo === "centena") return "000-999";
+      if (apostaSelecionada.tipo === "milhar") return "0000-9999";
+      if (apostaSelecionada.tipo === "milhar_centena") return "0000-9999";
+      
+      return "Número";
+    }
+
+    function criarBichosParaSelecao() {
+      grupoBichos.innerHTML = "";
+      bichos.forEach(bicho => {
+        const bichoItem = document.createElement("div");
+        bichoItem.className = "bicho-item";
+        bichoItem.dataset.id = bicho.id;
+        bichoItem.innerHTML = `
+          <div>${bicho.emoji}</div>
+          <div>${bicho.nome}</div>
+          <div>${bicho.dezenas.map(d => d.toString().padStart(2, '0')).join(', ')}</div>
+        `;
+        bichoItem.addEventListener("click", () => selecionarBicho(bicho, bichoItem));
+        grupoBichos.appendChild(bichoItem);
+      });
+    }
+
+    function selecionarBicho(bicho, elemento) {
+      if (bichosSelecionados.includes(bicho.id)) {
+        // Desselecionar se já estiver selecionado
+        bichosSelecionados = bichosSelecionados.filter(id => id !== bicho.id);
+        elemento.classList.remove("selecionado");
+      } else {
+        // Selecionar
+        bichosSelecionados.push(bicho.id);
+        elemento.classList.add("selecionado");
+      }
+    }
+
+    function mostrarInformacoes() {
+      modalInfoContent.innerHTML = `
+        <h4>Como Jogar no Jogo do Bicho</h4>
+        <p class="modal-descricao">
+          O Jogo do Bicho é uma loteria baseada em 25 animais, cada um com quatro números de dois dígitos (dezenas) associados.
+          Para jogar, selecione o tipo de aposta, insira o número correspondente e o valor que deseja apostar.
+        </p>
+        <div class="modal-exemplo">
+          <strong>Diferença 1º prêmio × 1º ao 5º</strong>
+          <p>Somente no 1º prêmio → prêmio cheio.</p>
+          <p>No 1º ao 5º → o prêmio é dividido por 5 (cada posição paga 20% do valor).</p>
+          <p>Exemplo com Dezena: Cotação: 60x. Apostei R$10 na dezena 25.</p>
+          <p>1º prêmio → ganho R$600,00.</p>
+          <p>1º ao 5º → se sair em qualquer um dos 5, ganho R$120,00.</p>
+        </div>
+        <p>Após fazer suas apostas, clique em "Sortear" para gerar os números aleatórios e verificar se você ganhou!</p>
+      `;
+      modalInfo.classList.add('ativo');
+    }
+
+    function gerarAutomaticoModal() {
+      if (!apostaSelecionada) return;
+      
+      if (apostaSelecionada.tipo === "grupo") {
+        // Para apostas de grupo, selecionar um bicho aleatório
+        const bichoAleatorio = bichos[Math.floor(Math.random() * bichos.length)];
+        
+        // Adicionar à seleção (não substituir)
+        if (!bichosSelecionados.includes(bichoAleatorio.id)) {
+          bichosSelecionados.push(bichoAleatorio.id);
+          
+          // Atualizar seleção visual
+          const bichoElement = document.querySelector(`.bicho-item[data-id="${bichoAleatorio.id}"]`);
+          if (bichoElement) {
+            bichoElement.classList.add("selecionado");
+          }
+        }
+      } else {
+        // Para outras apostas, gerar um número aleatório e adicionar à lista
+        let numeroGerado = "";
+        
+        if (apostaSelecionada.tipo === "dezena") {
+          numeroGerado = Math.floor(Math.random() * 100).toString().padStart(2, "0");
+        } else if (apostaSelecionada.tipo === "centena") {
+          numeroGerado = Math.floor(Math.random() * 1000).toString().padStart(3, "0");
+        } else if (apostaSelecionada.tipo === "milhar" || apostaSelecionada.tipo === "milhar_centena") {
+          numeroGerado = Math.floor(Math.random() * 10000).toString().padStart(4, "0");
+        }
+        
+        // Adicionar o número gerado à lista
+        adicionarInputNumero(numeroGerado);
+      }
+    }
+
+    function fazerAposta(e) {
+      e.preventDefault();
+      
+      if (!apostaSelecionada) {
+        alert("Selecione um tipo de aposta primeiro!");
+        return;
+      }
+      
+      // Validar nome do jogador
+      nomeJogador = apostaJogadorInput.value.trim();
+      if (!nomeJogador) {
+        alert("Por favor, informe seu nome!");
+        return;
+      }
+      
+      // Validar números apostados
+      let numerosValidos = [];
+      
+      if (apostaSelecionada.tipo === "grupo") {
+        if (bichosSelecionados.length === 0) {
+          alert("Selecione pelo menos um bicho!");
+          return;
+        }
+        numerosValidos = bichosSelecionados.map(id => id.toString().padStart(2, "0"));
+      } else {
+        // Coletar e validar números dos inputs
+        const inputs = numerosContainer.querySelectorAll('input');
+        for (const input of inputs) {
+          const numero = input.value.trim();
+          if (numero) {
+            // Validar formato do número
+            if (apostaSelecionada.tipo === "dezena" && !/^\d{2}$/.test(numero)) {
+              alert("Dezena deve ter exatamente 2 dígitos (00-99)!");
+              return;
+            }
+            if (apostaSelecionada.tipo === "centena" && !/^\d{3}$/.test(numero)) {
+              alert("Centena deve ter exatamente 3 dígitos (000-999)!");
+              return;
+            }
+            if ((apostaSelecionada.tipo === "milhar" || apostaSelecionada.tipo === "milhar_centena") && !/^\d{4}$/.test(numero)) {
+              alert("Milhar deve ter exatamente 4 dígitos (0000-9999)!");
+              return;
+            }
+            numerosValidos.push(numero);
+          }
+        }
+        
+        if (numerosValidos.length === 0) {
+          alert("Informe pelo menos um número!");
+          return;
+        }
+      }
+      
+      // Validar valor
+      let valor = apostaValorInput.value;
+      if (!valor) {
+        alert("Informe o valor da aposta!");
+        return;
+      }
+      
+      // Converter valor para número
+      valor = parseMoney(valor);
+      
+      if (valor <= 0) {
+        alert("O valor da aposta deve ser maior que zero!");
+        return;
+      }
+      
+      // Calcular prêmio potencial (valor da aposta × cotação × quantidade de números)
+      const valorPremio = apostaSelecionada.valor * valor * numerosValidos.length;
+      
+      // Adicionar à lista de apostas
+      apostasFeitas.push({
+        id: contadorApostas++,
+        tipo: apostaSelecionada.tipo,
+        nome: apostaSelecionada.nome,
+        numero: numerosValidos.join(", "),
+        valor: valor,
+        valorPremio: valorPremio,
+        premios: apostaPremiosSelect.value,
+        jogador: nomeJogador,
+        data: new Date().toLocaleString('pt-BR')
+      });
+      
+      // Fechar modal e atualizar interface
+      modalAposta.classList.remove('ativo');
+      atualizarListaApostas();
+      salvarDados();
+      
+      alert(`Aposta #${contadorApostas-1} registrada: ${apostaSelecionada.nome} nos números ${numerosValidos.join(", ")} com valor ${formatarMoeda(valor)}`);
+    }
+
+    function gerarApostaAutomatica() {
+      // Selecionar uma aposta aleatória
+      const apostaAleatoria = apostasInfo[Math.floor(Math.random() * apostasInfo.length)];
+      selecionarAposta(apostaAleatoria);
+    }
+
+    function atualizarListaApostas() {
+      listaResultados.innerHTML = "";
+      
+      if (apostasFeitas.length === 0) {
+        listaResultados.innerHTML = "<p>Nenhuma aposta feita ainda.</p>";
+        btnShare.disabled = true;
+        atualizarTotalApostas();
+        return;
+      }
+      
+      btnShare.disabled = false;
+      
+      // Ordenar apostas por ID (mais recentes primeiro)
+      apostasFeitas.sort((a, b) => b.id - a.id);
+      
+      apostasFeitas.forEach((aposta) => {
+        const div = document.createElement("div");
+        div.className = "resultado-item";
+        div.innerHTML = `
+          <div><strong>#${aposta.id} - ${aposta.nome}</strong> - Nº ${aposta.numero} - ${formatarMoeda(aposta.valor)}</div>
+          <div>Jogador: ${aposta.jogador}</div>
+          <div>Prêmio: ${formatarMoeda(aposta.valorPremio)} (${aposta.premios === '1' ? '1º Prêmio' : '1º ao 5º'})</div>
+          <div><small>Feita em: ${aposta.data}</small></div>
+          <button class="btn-remover" data-id="${aposta.id}">
+            <i class="fas fa-times"></i> Remover
+          </button>
+        `;
+        
+        // Adicionar evento de remoção
+        const btnRemover = div.querySelector('.btn-remover');
+        btnRemover.onclick = function() {
+          removerAposta(aposta.id);
+        };
+        
+        listaResultados.appendChild(div);
+      });
+      
+      atualizarTotalApostas();
+    }
+
+    function atualizarTotalApostas() {
+      const total = apostasFeitas.reduce((sum, aposta) => sum + aposta.valor, 0);
+      apostasTotalElement.textContent = `Total: ${formatarMoeda(total)}`;
+    }
+
+    function removerAposta(id) {
+      apostasFeitas = apostasFeitas.filter(aposta => aposta.id !== id);
+      atualizarListaApostas();
+      salvarDados();
+    }
+
+    function sortearNumero() {
+      return Math.floor(Math.random()*10000); // 0000 até 9999
+    }
+
+    function encontrarBicho(num) {
+      const dezena = parseInt(num.toString().slice(-2));
+      return bichos.find(b => b.dezenas.includes(dezena % 100));
+    }
+
+    function sortear() {
+      sortearBtn.disabled = true;
+      resetarBtn.disabled = true;
+      gerarAutomaticoBtn.disabled = true;
+      numerosSorteados = [];
+      
+      // Registrar data e hora do sorteio
+      const agora = new Date();
+      dataSorteio = agora.toLocaleDateString('pt-BR');
+      horaSorteio = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      
+      for (let i=0;i<5;i++) {
+        const numero = sortearNumero();
+        numerosSorteados.push(numero);
+        const numStr = numero.toString().padStart(4,"0");
+        const bicho = encontrarBicho(numero);
+        const numBicho = bichos.indexOf(bicho)+1;
+
+        setTimeout(()=>{
+          const roleta = document.querySelector(`#roleta-${i}`).children;
+
+          // Animação de roleta
+          numStr.split("").forEach((d,j)=>{
+            setTimeout(() => {
+              roleta[j].textContent = mapaEmoji[d];
+              roleta[j].classList.add('girando');
+              setTimeout(() => roleta[j].classList.remove('girando'), 500);
+            }, j*300);
+          });
+
+          // Só mostra o bicho depois da roleta terminar
+          setTimeout(()=>{
+            const premioDiv = document.querySelectorAll(".premio")[i];
+            premioDiv.querySelector(".emoji").textContent = bicho.emoji;
+            premioDiv.querySelector(".nome").textContent = 
+              `${numeroEmoji(numBicho.toString().padStart(2,"0"))} - ${bicho.nome}`;
+            premioDiv.querySelector(".dezenas").textContent =
+              `Milhar: ${numeroEmoji(numStr)} → Dezena: ${numeroEmoji(numStr.slice(-2))}`;
+              
+            // Verificar apostas quando o último número for sorteado
+            if(i===4) {
+              resetarBtn.disabled = false;
+              gerarAutomaticoBtn.disabled = false;
+              verificarApostas();
+              salvarDados();
+            }
+          }, 1500);
+        }, i*2000);
+      }
+    }
+
+    function verificarApostas() {
+      listaResultados.innerHTML = "";
+      
+      if (apostasFeitas.length === 0) {
+        listaResultados.innerHTML = "<p>Nenhuma aposta para verificar.</p>";
+        return;
+      }
+      
+      let totalGanho = 0;
+      let totalApostado = 0;
+      
+      // Ordenar apostas por ID (mais recentes primeiro)
+      apostasFeitas.sort((a, b) => b.id - a.id);
+      
+      apostasFeitas.forEach((aposta) => {
+        totalApostado += aposta.valor;
+        const resultado = calcularResultado(aposta);
+        if (resultado.ganhou) {
+          totalGanho += resultado.premio;
+        }
+        
+        const div = document.createElement("div");
+        div.className = `resultado-item ${resultado.ganhou ? 'ganhou' : 'perdeu'}`;
+        div.innerHTML = `
+          <div><strong>#${aposta.id} - ${aposta.nome}</strong> - Nº ${aposta.numero} - ${formatarMoeda(aposta.valor)}</div>
+          <div>Jogador: ${aposta.jogador}</div>
+          <div>${resultado.mensagem}</div>
+          ${resultado.ganhou ? `<div>Ganhou: ${formatarMoeda(resultado.premio)}</div>` : ''}
+          <div><small>Feita em: ${aposta.data}</small></div>
+        `;
+        listaResultados.appendChild(div);
+      });
+      
+      // Adicionar resumo
+      const resumoDiv = document.createElement("div");
+      resumoDiv.className = "resultado-item";
+      resumoDiv.innerHTML = `
+        <h4>📊 RESUMO</h4>
+        <div>Total apostado: ${formatarMoeda(totalApostado)}</div>
+        <div class="${totalGanho > 0 ? 'ganhou' : 'perdeu'}">Total ganho: ${formatarMoeda(totalGanho)}</div>
+        <div>Saldo: ${formatarMoeda(totalGanho - totalApostado)}</div>
+      `;
+      listaResultados.appendChild(resumoDiv);
+    }
+
+    function calcularResultado(aposta) {
+      const numerosApostados = aposta.numero.split(", ");
+      const premiosSelecionados = aposta.premios === '1' ? [0] : [0,1,2,3,4]; // Índices dos prêmios a verificar
+      
+      let ganhou = false;
+      let mensagem = "";
+      let premioCalculado = 0;
+      
+      for (const index of premiosSelecionados) {
+        if (index >= numerosSorteados.length) continue;
+        
+        const premio = numerosSorteados[index].toString().padStart(4, "0");
+        const dezenaPremio = premio.slice(-2);
+        const centenaPremio = premio.slice(1);
+        const grupoPremio = encontrarBicho(numerosSorteados[index]);
+        const numGrupoPremio = (bichos.indexOf(grupoPremio) + 1).toString().padStart(2, "0");
+        
+        for (const numeroApostado of numerosApostados) {
+          switch(aposta.tipo) {
+            case "grupo":
+              if (numGrupoPremio === numeroApostado.padStart(2, "0")) {
+                ganhou = true;
+                premioCalculado += aposta.valorPremio / (aposta.premios === '5' ? 5 : 1) / numerosApostados.length;
+                mensagem = `🎉 Acertou o grupo ${numeroApostado} no ${titulos[index]}!`;
+              } else if (!mensagem) {
+                mensagem = `❌ O grupo do ${titulos[index]} foi ${numGrupoPremio}`;
+              }
+              break;
+              
+            case "dezena":
+              if (dezenaPremio === numeroApostado.padStart(2, "0")) {
+                ganhou = true;
+                premioCalculado += aposta.valorPremio / (aposta.premios === '5' ? 5 : 1) / numerosApostados.length;
+                mensagem = `🎉 Acertou a dezena ${numeroApostado} no ${titulos[index]}!`;
+              } else if (!mensagem) {
+                mensagem = `❌ A dezena do ${titulos[index]} foi ${dezenaPremio}`;
+              }
+              break;
+              
+            case "milhar":
+              if (premio === numeroApostado.padStart(4, "0")) {
+                ganhou = true;
+                premioCalculado += aposta.valorPremio / (aposta.premios === '5' ? 5 : 1) / numerosApostados.length;
+                mensagem = `🎉 Acertou a milhar ${numeroApostado} no ${titulos[index]}!`;
+              } else if (!mensagem) {
+                mensagem = `❌ A milhar do ${titulos[index]} foi ${premio}`;
+              }
+              break;
+              
+            case "centena":
+              if (centenaPremio === numeroApostado.padStart(3, "0")) {
+                ganhou = true;
+                premioCalculado += aposta.valorPremio / (aposta.premios === '5' ? 5 : 1) / numerosApostados.length;
+                mensagem = `🎉 Acertou a centena ${numeroApostado} no ${titulos[index]}!`;
+              } else if (!mensagem) {
+                mensagem = `❌ A centena do ${titulos[index]} foi ${centenaPremio}`;
+              }
+              break;
+              
+            case "milhar_centena":
+              if (premio === numeroApostado.padStart(4, "0") || centenaPremio === numeroApostado.slice(-3).padStart(3, "0")) {
+                ganhou = true;
+                premioCalculado += aposta.valorPremio / (aposta.premios === '5' ? 5 : 1) / numerosApostados.length;
+                mensagem = `🎉 Acertou a milhar/centena ${numeroApostado} no ${titulos[index]}!`;
+              } else if (!mensagem) {
+                mensagem = `❌ A milhar do ${titulos[index]} foi ${premio} e a centena ${centenaPremio}`;
+              }
+              break;
+          }
+          
+          if (ganhou) break;
+        }
+        if (ganhou) break;
+      }
+      
+      return {
+        ganhou: ganhou,
+        mensagem: mensagem,
+        premio: premioCalculado
+      };
+    }
+
+    function resetar() {
+      criarInterface();
+      sortearBtn.disabled = false;
+      resetarBtn.disabled = true;
+      numerosSorteados = [];
+      listaResultados.innerHTML = "<p>Nenhuma aposta verificada ainda.</p>";
+      salvarDados();
+    }
+
+    function apagarTudo() {
+      if (confirm("Tem certeza que deseja apagar todas as apostas?")) {
+        apostasFeitas = [];
+        contadorApostas = 1;
+        atualizarListaApostas();
+        salvarDados();
+        alert("Todas as apostas foram removidas!");
+      }
+    }
+
+    function compartilharWhatsApp() {
+      if (apostasFeitas.length === 0 && numerosSorteados.length === 0) {
+        alert("Não há nada para compartilhar!");
+        return;
+      }
+      
+      let texto = "🎰 *JOGO DO BICHO* 🎰%0A%0A";
+      
+      // Adicionar data e hora
+      texto += `*Data:* ${new Date().toLocaleDateString('pt-BR')}%0A`;
+      texto += `*Hora:* ${new Date().toLocaleTimeString('pt-BR')}%0A%0A`;
+      
+      // Adicionar resultados se houver sorteio
+      if (numerosSorteados.length > 0) {
+        texto += "🏆 *RESULTADOS* 🏆%0A";
+        texto += "=====================%0A";
+        
+        numerosSorteados.forEach((numero, index) => {
+          const numStr = numero.toString().padStart(4, "0");
+          const bicho = encontrarBicho(numero);
+          texto += `${titulos[index]}: ${numStr} - ${bicho.nome} ${bicho.emoji}%0A`;
+        });
+        
+        texto += "%0A";
+      }
+      
+      // Adicionar apostas se houver
+      if (apostasFeitas.length > 0) {
+        texto += "📋 *APOSTAS* 📋%0A";
+        texto += "=====================%0A";
+        
+        let totalApostado = 0;
+        let totalGanho = 0;
+        
+        apostasFeitas.forEach(aposta => {
+          texto += `#${aposta.id} - ${aposta.nome}%0A`;
+          texto += `Nº: ${aposta.numero}%0A`;
+          texto += `Jogador: ${aposta.jogador}%0A`;
+          texto += `Valor: ${formatarMoeda(aposta.valor)}%0A`;
+          totalApostado += aposta.valor;
+          
+          // Calcular resultado se houver sorteio
+          if (numerosSorteados.length > 0) {
+            const resultado = calcularResultado(aposta);
+            if (resultado.ganhou) {
+              texto += `✅ GANHOU: ${formatarMoeda(resultado.premio)}%0A`;
+              totalGanho += resultado.premio;
+            } else {
+              texto += `❌ PERDEU%0A`;
+            }
+          }
+          
+          texto += "-----------------%0A";
+        });
+        
+        texto += `*Total apostado:* ${formatarMoeda(totalApostado)}%0A`;
+        
+        if (numerosSorteados.length > 0) {
+          texto += `*Total ganho:* ${formatarMoeda(totalGanho)}%0A`;
+          texto += `*Saldo:* ${formatarMoeda(totalGanho - totalApostado)}%0A`;
+        }
+      }
+      
+      texto += "%0A🍀 *Boa sorte!* 🍀";
+      
+      window.open(`https://wa.me/5583886737667?text=${texto}`, '_blank');
+    }
+
+    // LocalStorage functions
+    function salvarDados() {
+      const dados = {
+        apostas: apostasFeitas,
+        numerosSorteados: numerosSorteados,
+        contador: contadorApostas,
+        jogador: nomeJogador,
+        data: new Date().toISOString()
+      };
+      localStorage.setItem('jogoBichoDados', JSON.stringify(dados));
+    }
+
+    function carregarDados() {
+      const dadosSalvos = localStorage.getItem('jogoBichoDados');
+      if (dadosSalvos) {
+        const dados = JSON.parse(dadosSalvos);
+        apostasFeitas = dados.apostas || [];
+        numerosSorteados = dados.numerosSorteados || [];
+        contadorApostas = dados.contador || 1;
+        nomeJogador = dados.jogador || "";
+        
+        atualizarListaApostas();
+        
+        // Se havia números sorteados, exibir eles
+        if (numerosSorteados.length > 0) {
+          exibirNumerosSalvos();
+          resetarBtn.disabled = false;
+        }
+      }
+    }
+
+    function exibirNumerosSalvos() {
+      for (let i=0;i<5;i++) {
+        if (i < numerosSorteados.length) {
+          const numero = numerosSorteados[i];
+          const numStr = numero.toString().padStart(4,"0");
+          const bicho = encontrarBicho(numero);
+          const numBicho = bichos.indexOf(bicho)+1;
+          
+          const roleta = document.querySelector(`#roleta-${i}`).children;
+          numStr.split("").forEach((d,j)=>{
+            roleta[j].textContent = mapaEmoji[d];
+          });
+          
+          const premioDiv = document.querySelectorAll(".premio")[i];
+          premioDiv.querySelector(".emoji").textContent = bicho.emoji;
+          premioDiv.querySelector(".nome").textContent = 
+            `${numeroEmoji(numBicho.toString().padStart(2,"0"))} - ${bicho.nome}`;
+          premioDiv.querySelector(".dezenas").textContent =
+            `Milhar: ${numeroEmoji(numStr)} → Dezena: ${numeroEmoji(numStr.slice(-2))}`;
+        }
+      }
+    }
+  </script>
+</body>
+</html>
